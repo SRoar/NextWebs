@@ -1,9 +1,36 @@
+'use client';
 import Image from "next/image";
+import { useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 export default function Home() {
+  const [number, setNumber] = useState(0);
+
+  function incrementByOne() {
+    setNumber(number + 1)
+  }
+
+  function decrementByOne() {
+    setNumber(number - 1)
+  }
+
+  
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+        <a className="btn btn-primary" >
+          <button type="button" >Special Number: {number}</button>
+        </a>
+        <a className="btn btn-primary" >
+          <button type="button" onClick = {incrementByOne}>Add By One</button>
+        </a>
+        <a className="btn btn-primary" >
+          <button type="button" onClick = {decrementByOne}>Subtract By One</button>
+        </a>
+
+        
+        
         <Image
           className="dark:invert"
           src="/next.svg"
