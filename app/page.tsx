@@ -1,12 +1,15 @@
 'use client';
-import { useState } from 'react';
+import { useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 
 export default function Home() {
   // const [number, setNumber] = useState(0);
   const [userPrompt, setUserPrompt] = useState('');
   const [response, setResponse] = useState("");  // ollama response
+  const [fileName, setFileName] = useState("");
+  const [fileContent, setFileContent] = useState("");
 
   // function incrementByOne() {
   //   setNumber(number + 1)
@@ -28,6 +31,42 @@ export default function Home() {
     setResponse(data.response);
 
   };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0]; // Get the first uploaded file
+    if (!file) return; // If no file is selected, do nothing
+
+    setFileName(file.name); // Store file name in state
+
+    const reader = new FileReader(); // Create a new FileReader instance
+
+    try {
+        reader.onload = (event) => {
+        if (!event.target) return;
+        const content = event.target.result; // Get file content as text
+        setFileContent(content as string);
+        console.log(content);
+       }
+       console.log("successfully read file")
+    }
+    catch {
+      console.log("failed")
+    }
+
+    reader.readAsText(file)
+    
+    // Handle different file types
+    // if (file.type === "application/pdf") {
+    //   // For PDF files, we'll need server-side processing
+    //   const formData = new FormData();
+    //   formData.append("file", file);
+    // } else {
+    // reader.readAsText(file)
+    // }
+    
+  }
+
+  
 
   
   return (
@@ -54,6 +93,31 @@ export default function Home() {
         Response: {response}
         </div> */}
 
+        {/* <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+          <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+        </svg>
+        <input type = "file" onClick = {handleFileChange}/> */}
+
+        <div className="mb-3" style={{ color: 'black', fontSize: 18 }}>
+        <input type="file" onChange={handleFileChange} />
+        <br>
+        </br>
+        <div>
+          Current File: {fileName || ""}
+          <button onClick={()=> setFileName("")} className="btn btn-primary" >
+            Clear File
+          </button>
+        </div>
+
+        <text>
+          {fileContent}
+        </text>
+
+        
+      </div>
+
+
         <div className="p-4">
         <textarea
           className="border p-2 w-full text-black"
@@ -65,6 +129,22 @@ export default function Home() {
         <button onClick={()=> sendPrompt(userPrompt)} className="btn btn-primary" >
           Send
         </button>
+
+        
+          
+          
+          {/* <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+            <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+          </svg> */}
+        
+        
+
+        {/* <div className="mb-3">
+          <input className="form-control" type="file" id="formFile" onChange={handleFileChange}/>
+        </div> */}
+          
+         
         
         
         <div style={{ marginTop: "2rem", whiteSpace: "pre-wrap" }}>
