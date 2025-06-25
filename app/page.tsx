@@ -11,6 +11,8 @@ export default function Home() {
   const [fileName, setFileName] = useState("");
   const [fileContent, setFileContent] = useState("");
 
+  const [state, setState] = useState("");
+
   // function incrementByOne() {
   //   setNumber(number + 1)
   // }
@@ -20,15 +22,17 @@ export default function Home() {
   // }
   
 
-  const sendPrompt = async (kumarWisdom: string) => {
+  const sendPrompt = async (kumarWisdom: string, moreWisdom: string) => {
     const res = await fetch('api/ollama/', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({prompt: kumarWisdom}),
+      body: JSON.stringify({prompt: kumarWisdom + moreWisdom}),
     });
 
     const data = await res.json();
     setResponse(data.response);
+
+    console.log("read the content")
 
   };
 
@@ -45,12 +49,15 @@ export default function Home() {
         if (!event.target) return;
         const content = event.target.result; // Get file content as text
         setFileContent(content as string);
+        // setUserPrompt(content as string);
         console.log(content);
        }
        console.log("successfully read file")
+       setState("Successfully Read File")
     }
     catch {
       console.log("failed")
+      setState("Failed File Read")
     }
 
     reader.readAsText(file)
@@ -66,11 +73,16 @@ export default function Home() {
     
   }
 
+  function clear() {
+    setFileName("")
+    setState("")
+    setFileContent("")
+  }
   
 
   
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)] ">
+    <div style={{ backgroundColor: "grey" }}>
       {/* <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
         <a className="btn btn-primary" >
           <button type="button" >Special Number: {number}</button>
@@ -105,14 +117,23 @@ export default function Home() {
         </br>
         <div>
           Current File: {fileName || ""}
-          <button onClick={()=> setFileName("")} className="btn btn-primary" >
+          <button onClick={()=> clear()} className="btn btn-primary" >
             Clear File
           </button>
         </div>
 
-        <text>
-          {fileContent}
-        </text>
+        {state} 
+        <br>
+        </br>
+        File Content: {fileContent}
+
+        {/* <div>
+          
+          <button onClick={()=> sendPrompt(userPrompt, fileContent)} className="btn btn-primary" >
+            Read both prompt and file
+          </button>
+        </div> */}
+        
 
         
       </div>
@@ -126,8 +147,11 @@ export default function Home() {
           placeholder="Type your prompt..."
         />
         
-        <button onClick={()=> sendPrompt(userPrompt)} className="btn btn-primary" >
+        {/* <button onClick={()=> sendPrompt(userPrompt)} className="btn btn-primary" >
           Send
+        </button> */}
+        <button onClick={()=> sendPrompt(fileContent, userPrompt)} className="btn btn-primary" >
+            Read both prompt and file
         </button>
 
         
