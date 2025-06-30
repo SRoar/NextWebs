@@ -36,7 +36,7 @@ export default function Home() {
 
   };
 
-  const handleFileChange = async (e) => {
+  const handleFileChange = async (e: any) => {
     const file = e.target.files[0]; // Get the first uploaded file
     if (!file) return; // If no file is selected, do nothing
 
