@@ -1,6 +1,7 @@
 'use client';
-import { useState} from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { useState, useEffect} from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css'; //bootstrap
+
 
 
 
@@ -13,6 +14,12 @@ export default function Home() {
 
   const [state, setState] = useState("");
 
+  //waiting for render
+  const [hasMounted, setHasMounted] = useState(false);
+  useEffect(() => {
+  setHasMounted(true);
+  }, []);
+
   // function incrementByOne() {
   //   setNumber(number + 1)
   // }
@@ -21,7 +28,7 @@ export default function Home() {
   //   setNumber(number - 1)
   // }
   
-
+ 
   const sendPrompt = async (kumarWisdom: string, moreWisdom: string) => {
     const res = await fetch('api/ollama/', {
       method: "POST",
@@ -36,6 +43,8 @@ export default function Home() {
 
   };
 
+
+
   const handleFileChange = async (e: any) => {
     const file = e.target.files[0]; // Get the first uploaded file
     if (!file) return; // If no file is selected, do nothing
@@ -44,7 +53,32 @@ export default function Home() {
 
     const reader = new FileReader(); // Create a new FileReader instance
 
-    try {
+    if (file.type === "application/pdf") {
+      try {
+        // For PDF files, we'll need server-side processing
+        const formData = new FormData();
+        formData.append("file", file, fileName);
+
+        const res = await fetch('/api/ollama/pdf', {
+        method: 'POST',
+        body: formData,
+        });
+
+        const data = await res.json();
+        setFileContent(data.extractedText);
+        console.log("File Content: " + data.extractedText);
+        console.log("succesfully opened file");
+
+      }
+      catch {
+        console.log("pdf open failed.");
+      }
+    }
+
+    
+    else {
+
+      try {
         reader.onload = (event) => {
         if (!event.target) return;
         const content = event.target.result; // Get file content as text
@@ -70,9 +104,11 @@ export default function Home() {
     // } else {
     // reader.readAsText(file)
     // }
-    
-  }
+}
 
+}
+
+    
   function clear() {
     setFileName("")
     setState("")
@@ -125,8 +161,12 @@ export default function Home() {
         {state} 
         <br>
         </br>
-        File Content: {fileContent}
-
+        {hasMounted && (
+          <>
+          File Content: {fileContent}
+          </>
+        
+        )}
         {/* <div>
           
           <button onClick={()=> sendPrompt(userPrompt, fileContent)} className="btn btn-primary" >
@@ -153,6 +193,7 @@ export default function Home() {
         <button onClick={()=> sendPrompt(fileContent, userPrompt)} className="btn btn-primary" >
             Read both prompt and file
         </button>
+       
 
         
           
