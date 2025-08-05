@@ -56,8 +56,20 @@ export default function Home() {
     if (file.type === "application/pdf") {
       try {
         // For PDF files, we'll need server-side processing
+        // const handlePdfFile = async () => {
+        //   const formData = new FormData();
+        //   formData.append("file", file, file.name);
+
+        //   const res = await fetch('/api/ollama/pdf', {
+        //   method: 'POST',
+        //   body: formData,
+        //   });
+
+        //   const data = await res.json();
+        //   return data.extractedText;
+        // }
         const formData = new FormData();
-        formData.append("file", file, fileName);
+        formData.append("file", file, file.name);
 
         const res = await fetch('/api/ollama/pdf', {
         method: 'POST',
@@ -65,8 +77,11 @@ export default function Home() {
         });
 
         const data = await res.json();
-        setFileContent(data.extractedText);
-        console.log("File Content: " + data.extractedText);
+        const pdfText = data.extractedText;
+        
+        // const pdfText = await handlePdfFile();
+        setFileContent(pdfText);
+        console.log("File Content: " + pdfText);
         console.log("succesfully opened file");
 
       }
